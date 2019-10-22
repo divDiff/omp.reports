@@ -1,4 +1,4 @@
-package com.div.diff.omp.yearEnd.processors;
+package com.div.diff.omp.report.processors;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,7 +18,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-import com.div.diff.omp.yearEnd.model.Transaction;
+import com.div.diff.omp.reports.model.Transaction;
 
 public class ThankYouProcessor {
 	private Map<String, List<Transaction>> donorGifts;

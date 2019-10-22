@@ -1,8 +1,8 @@
-package com.div.diff.omp.yearEnd;
+package com.div.diff.omp.reports;
 
 import java.io.IOException;
 
-import com.div.diff.omp.yearEnd.processors.ThankYouProcessor;
+import com.div.diff.omp.report.processors.ThankYouProcessor;
 
 /**
  * Hello world!

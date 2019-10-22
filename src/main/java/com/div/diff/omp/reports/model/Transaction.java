@@ -1,4 +1,4 @@
-package com.div.diff.omp.yearEnd.model;
+package com.div.diff.omp.reports.model;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
