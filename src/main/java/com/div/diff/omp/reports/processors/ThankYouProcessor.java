@@ -2,6 +2,7 @@ package com.div.diff.omp.reports.processors;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -56,10 +57,11 @@ public class ThankYouProcessor extends OmpProcessor {
 			if (match.find()) {
 				donor = transliterate(donor);
 			}
+			DecimalFormat df = new DecimalFormat("#.##");
 
 			String greet = "Dear " + donor + ",";
 			String line1 = "On behalf of the Orthodox Mission in Pakistan, we thank you for your support of OMP in "
-					+ year + " in the amount of $" + annualTotal.toString() + ".";
+					+ year + " in the amount of $" + df.format(annualTotal) + ".";
 			String line2 = "Your donation provides critical support to Fr John Tanveer and the Orthodox "
 					+ "faithful of Pakistan. Fr John relies on the ";
 			String line3 = "generosity of donors like you to carry out his ministry. Your financial "
@@ -102,12 +104,13 @@ public class ThankYouProcessor extends OmpProcessor {
 			contentStream.newLine();
 			contentStream.showText(prayer);
 
-			System.out.println("Content added for donor " + donor);
+			System.out.println("Thank you letter created for" + " " + donor);
 		}
 		contentStream.endText();
 		contentStream.close();
 		thankYou.addPage(tyPage);
-		thankYou.save(outDir + "/" + donor + "-" + year + "-thank-you.pdf");
+		String donorNoSpace = donor.replace(" ", "-");
+		thankYou.save(outDir + "/" + donorNoSpace + "-" + year + "-thank-you.pdf");
 		thankYou.close();
 	}
 }

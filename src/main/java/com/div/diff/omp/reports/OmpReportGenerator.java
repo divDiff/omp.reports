@@ -26,17 +26,21 @@ public class OmpReportGenerator {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		loadProps(args[0]);
-		System.out.println("Starting " + year + " thank you letter generation...");
+		System.out.println("Starting " + year + " data processing...");
 
 		DonorGiftUtil dgu = new DonorGiftUtil();
 		Map<String, List<Transaction>> donorGifts = dgu.assembleDonorData(dataPath);
 		if (makeThankYous) {
+			System.out.println("Starting " + year + " thank you letter ");
 			ThankYouProcessor typ = new ThankYouProcessor();
 			typ.createThankYous(donorGifts, new Integer(year).intValue(), outPath);
+			System.out.println("Completed thank you letter creation");
 		}
 		if (makeReports) {
 			ReportsProcessor rp = new ReportsProcessor();
-			rp.generateMonthlyReports(dataPath, outPath, year, true);
+			System.out.println("Starting report generation");
+			rp.generateMonthlyReports(dataPath, outPath, year, false);
+			System.out.println("Completed report generation");
 		}
 	}
 

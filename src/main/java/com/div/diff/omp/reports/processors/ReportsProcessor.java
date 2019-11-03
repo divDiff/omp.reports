@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 import com.div.diff.omp.reports.model.Transaction;
 
@@ -24,6 +26,7 @@ public class ReportsProcessor extends OmpProcessor {
 		double monthlyAmount = 0.0;
 		double monthlyFees = 0.0;
 		double monthlyNet = 0.0;
+		double monthlyWithdrawal = 0.0;
 		int currMonth = 1;
 		while ((row = reader.readLine()) != null) {
 			try {
@@ -32,20 +35,35 @@ public class ReportsProcessor extends OmpProcessor {
 						continue;
 					}
 					pw.println(header);
+					continue;
 				}
 				Transaction t = new Transaction(row);
-				String name = getName(row);
-				monthlyAmount += t.getGross();
-				monthlyFees += t.getCost();
-				monthlyNet += t.getNet();
+				String name = transliterate(getName(row));
 
-				pw.println("\t" + name + "\t" + t.getGross() + "\t" + t.getCost() + "\t" + t.getNet() + "\t\t"
-						+ t.getTransDate().toString());
 				if (t.getTransDate().getMonthValue() - currMonth > 0) {
-					pw.println("Total\t\t" + monthlyAmount + "\t" + monthlyFees + "\t" + monthlyNet);
+					DecimalFormat df = new DecimalFormat("#.##");
+					df.setRoundingMode(RoundingMode.CEILING);
+					pw.println("Total\t\t" + df.format(monthlyAmount) + "\t" + df.format(monthlyFees) + "\t"
+							+ df.format(monthlyNet));
+					pw.println("Monthly PayPal Withdrawal\t\t" + df.format(monthlyWithdrawal));
 					pw.println();
 					currMonth++;
+					monthlyAmount = 0;
+					monthlyFees = 0;
+					monthlyNet = 0;
 				}
+				String[] cells = row.split("\\t");
+				if (!cells[2].equals("General Withdrawal")) {
+					monthlyAmount += t.getGross();
+					monthlyFees += t.getCost();
+					monthlyNet += t.getNet();
+				} else {
+					monthlyWithdrawal += t.getGross();
+				}
+
+				pw.println("\t" + name + "\t" + t.getGross() + "\t" + t.getCost() + "\t" + t.getNet() + "\t"
+						+ "Pay Pal\t" + t.getTransDate().toString());
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(row);
