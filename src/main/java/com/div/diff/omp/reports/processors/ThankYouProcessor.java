@@ -8,12 +8,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import com.div.diff.omp.reports.model.Transaction;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
 public class ThankYouProcessor extends OmpProcessor {
 
@@ -42,75 +41,45 @@ public class ThankYouProcessor extends OmpProcessor {
 
 	// TODO Consider retooling this to use iText instead of PDFBox
 	private void generateDonorThankYou(String donor, Float annualTotal, String outDir, int year) throws IOException {
-		PDDocument thankYou = new PDDocument();
-		PDPage tyPage = new PDPage();
-		PDPageContentStream contentStream = new PDPageContentStream(thankYou, tyPage);
-		contentStream.beginText();
 		Pattern cyrillic = Pattern.compile("[А-яЁё]+");
 		Matcher match = cyrillic.matcher(donor);
-		contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
-		contentStream.setLeading(14.5f);
-		contentStream.newLineAtOffset(25, 750);
 
 		// Don't create report for General Withdrawals
+		String donorNoSpace = donor.replace(" ", "-");
 		if (!donor.equals("")) {
 			if (match.find()) {
 				donor = transliterate(donor);
 			}
 			DecimalFormat df = new DecimalFormat("#.##");
 
-			String greet = "Dear " + donor + ",";
-			String line1 = "On behalf of the Orthodox Mission in Pakistan, we thank you for your support of OMP in "
-					+ year + " in the amount of $" + df.format(annualTotal) + ".";
-			String line2 = "Your donation provides critical support to Fr John Tanveer and the Orthodox "
-					+ "faithful of Pakistan. Fr John relies on the ";
-			String line3 = "generosity of donors like you to carry out his ministry. Your financial "
-					+ "support purchases food and medicine for widows";
-			String line4 = "and the poor, funds the operating costs of the women’s sewing center, "
-					+ "provides material help to students, offers legal ";
-			String line5 = "aid to Orthodox Christians who are falsely accused of blasphemy (speaking "
-					+ "against Islam), provides emergency ";
-			String line6 = "assistance to those in dire need, and enables Fr John to carry out his pastoral duties. "
-					+ "Fr John writes, \"Although I am not ";
-			String line7 = "so strong yet due to your great support I am trying and go on trying with God’s help to "
-					+ "work for the needy and save the ";
-			String line8 = "people who are in trouble.\"";
-			String finalThanks = "Again, we thank you.";
-			String prayer = "Please keep Fr John, Presvytera Rosy, their children, and all of the Orthodox faithful of Pakistan in your prayers.";
+			StringBuilder text = new StringBuilder();
+			text.append("On behalf of the Orthodox Mission in Pakistan, we thank you for your support of OMP in " + year
+					+ " in the ");
+			text.append("amount of $" + df.format(annualTotal)
+					+ ". Your donation provides critical support to Fr John Tanveer and the Orthodox ");
+			text.append("faithful of Pakistan. Fr John relies on the generosity of donors "
+					+ "like you to carry out his ministry. Your financial support purchases "
+					+ "food and medicine for widows ");
+			text.append("and the poor, funds the operating costs of the women’s sewing center, ");
+			text.append("provides material help to students, offers legal ");
+			text.append("aid to Orthodox Christians who are falsely accused of blasphemy (speaking ");
+			text.append("against Islam), provides emergency ");
+			text.append("assistance to those in dire need, and enables Fr John to carry out his pastoral duties. ");
+			text.append("Fr John writes, \"Although I am not so strong yet due to your great support "
+					+ "I am trying and go on trying with God’s help to ");
+			text.append("work for the needy and save the people who are in trouble.\"");
+			text.append("\n\nAgain, we thank you.\n\n");
+			text.append("Please keep Fr John, Presvytera Rosy, their children, and all of the Orthodox "
+					+ "faithful of Pakistan in your prayers.");
 
-			contentStream.showText(greet);
-			contentStream.setFont(PDType1Font.TIMES_ROMAN, 12);
-			contentStream.newLine();
-			contentStream.newLine();
-			contentStream.showText(line1);
-			contentStream.newLine();
-			contentStream.showText(line2);
-			contentStream.newLine();
-			contentStream.showText(line3);
-			contentStream.newLine();
-			contentStream.showText(line4);
-			contentStream.newLine();
-			contentStream.showText(line5);
-			contentStream.newLine();
-			contentStream.showText(line6);
-			contentStream.newLine();
-			contentStream.showText(line7);
-			contentStream.newLine();
-			contentStream.showText(line8);
-			contentStream.newLine();
-			contentStream.newLine();
-			contentStream.showText(finalThanks);
-			contentStream.newLine();
-			contentStream.newLine();
-			contentStream.showText(prayer);
+			PdfWriter writer = new PdfWriter(outDir + "/" + donorNoSpace + "-" + year + "-thank-you.pdf");
+			PdfDocument pdf = new PdfDocument(writer);
+			Document thankYou = new Document(pdf);
+			thankYou.add(new Paragraph("Dear " + donor + ","));
+			thankYou.add(new Paragraph(text.toString()));
 
 			System.out.println("Thank you letter created for" + " " + donor);
+			thankYou.close();
 		}
-		contentStream.endText();
-		contentStream.close();
-		thankYou.addPage(tyPage);
-		String donorNoSpace = donor.replace(" ", "-");
-		thankYou.save(outDir + "/" + donorNoSpace + "-" + year + "-thank-you.pdf");
-		thankYou.close();
 	}
 }

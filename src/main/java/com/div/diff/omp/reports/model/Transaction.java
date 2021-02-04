@@ -22,6 +22,7 @@ public class Transaction {
 		try {
 			setNumbers(data);
 		} catch (NumberFormatException e) {
+			e.printStackTrace();
 			String reformatted = new String(csvData);
 			Pattern numberWithCommas = Pattern.compile("-?([0-9\\.\\,])*");
 			Matcher match = numberWithCommas.matcher(csvData);
@@ -32,6 +33,7 @@ public class Transaction {
 				copy = copy.replace(",", "");
 				reformatted = reformatted.replace(m, copy);
 			}
+
 			data = reformatted.split("\t");
 			setNumbers(data);
 		}
@@ -74,9 +76,16 @@ public class Transaction {
 		return transDate.toString() + " " + gross;
 	}
 
+	private String cleanNumber(String num) {
+		num = num.replace("\"", "");
+		num = num.replace(",", "");
+		num = num.replace("$", "");
+		return num;
+	}
+
 	private void setNumbers(String[] data) {
-		gross = new Float(data[5]);
-		cost = new Float(data[6]);
-		net = new Float(data[7]);
+		gross = new Float(cleanNumber(data[2]));
+		cost = new Float(cleanNumber(data[3]));
+		net = new Float(cleanNumber(data[4]));
 	}
 }

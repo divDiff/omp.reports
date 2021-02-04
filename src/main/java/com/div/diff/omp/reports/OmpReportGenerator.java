@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import com.div.diff.omp.reports.model.Transaction;
 import com.div.diff.omp.reports.processors.ReportsProcessor;
@@ -45,37 +46,15 @@ public class OmpReportGenerator {
 	}
 
 	private static void loadProps(String propsPath) throws IOException {
+		Properties p = new Properties();
 		BufferedReader read = new BufferedReader(new FileReader(propsPath));
-		String line = "";
 		try {
-			while ((line = read.readLine()) != null) {
-				String[] parts = line.split("=");
-				switch (parts[0]) {
-				case "out.path":
-					outPath = parts[1];
-					break;
-				case "data.path":
-					dataPath = parts[1];
-					break;
-				case "year":
-					year = parts[1];
-					break;
-				case "generate.thank.yous":
-					if ("true".equals(parts[1])) {
-						makeThankYous = true;
-					} else {
-						makeThankYous = false;
-					}
-					break;
-				case "generate.report":
-					if ("true".equals(parts[1])) {
-						makeReports = true;
-					} else {
-						makeReports = false;
-					}
-					break;
-				}
-			}
+			p.load(read);
+			outPath = p.getProperty("out.path");
+			dataPath = p.getProperty("data.path");
+			year = p.getProperty("year");
+			makeThankYous = p.getProperty("generate.thank.yous").equals("true") ? true : false;
+			makeReports = p.getProperty("generate.report").equals("true") ? true : false;
 		} finally {
 			read.close();
 		}
