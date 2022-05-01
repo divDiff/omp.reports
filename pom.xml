@@ -25,6 +25,19 @@
           <target>11</target>
         </configuration>
       </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.div.diff.omp.reports.OmpReportGenerator</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
     </plugins>
   </build>
 

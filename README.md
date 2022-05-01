@@ -15,7 +15,11 @@ value for the Fee and Net column.
 ## Running the OMP Report Generator
 
 Run as a jar:
-	--FORTHCOMING
+
+Build with mvn clean install then run
+	
+java -jar omp.reports-0.0.1-SNAPSHOT.jar /path/to/omp.properties
+
 Run as a Java Application in Eclipse:
 -Set up a Java Application, then provide the 
 path to omp.properties as a command line arg, then
